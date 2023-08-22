@@ -1,0 +1,8 @@
+
+CompileFlags:
+  Add: [ -I/usr/local/include, -I/usr/local/include/harfbuzz,
+    -I/usr/local/include/glib-2.0, -I/usr/local/lib/glib-2.0/include,
+    -I/usr/local/include/fribidi, -I/usr/local/include/libxml2,
+    -I/usr/X11R6/include, -I/usr/X11R6/include/freetype2,
+    -I/usr/local/include/lua-5.1, -I/usr/local/include/SDL2, -D_REENTRANT,
+    -I/usr/X11R6/include/libdrm ]

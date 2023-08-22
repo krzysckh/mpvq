@@ -1,0 +1,56 @@
+=pod
+
+=head1 NAME
+
+mpvq - tui playlist manager for mpv
+
+=head1 SYNOPSIS
+
+B<mpvq> [B<-a>] [B<playlist-file>]
+
+=head1 DESCRIPTION
+
+B<mpvq> manages playlists. easily.
+
+keybindings:
+  global:
+    j     - go down
+    k     - go up
+    tab   - change window file explorer <-> playlist
+    space - play/pause
+    s     - save current playlist
+    q     - exit
+    n     - next song in playlist
+    N     - previous song in playlist
+  playlist:
+    l     - play song
+    K     - move song up in playlist
+    J     - move song down in playlist
+  file explorer:
+    l     - enter directory
+    a     - add file/add music files from directory
+    r     - read playlist file under the cursor
+
+=head1 OPTIONS
+
+=over
+
+=item B<-a>
+
+use ascii characters to draw borders.
+
+=back
+
+=head1 AUTHOR
+
+Written by krzysckh L<[krzysckh.org]|https://krzysckh.org/>.
+
+=head1 COPYRIGHT
+
+Under BSD 2-Clause license.
+
+=head1 SEE ALSO
+
+L<Source code|https://github.com/krzysckh/mpvq>
+
+=cut

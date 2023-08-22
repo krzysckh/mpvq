@@ -1,0 +1,33 @@
+mpvq
+----
+
+simple tui wrapper for mpv playlists. (wip)
+
+dependencies:
+  - perldoc (https://man.openbsd.org/perldoc)
+  - mpv w/ libmpv
+
+build:
+  $ git clone --recursive https://github.com/krzysckh/mpvq
+  $ cd mpvq
+  $ make
+  # make install
+
+keybindings:
+  global:
+    j     - go down
+    k     - go up
+    tab   - change window file explorer <-> playlist
+    space - play/pause
+    s     - save current playlist
+    q     - exit
+    n     - next song in playlist
+    N     - previous song in playlist
+  playlist:
+    l     - play song
+    K     - move song up in playlist
+    J     - move song down in playlist
+  file explorer:
+    l     - enter directory
+    a     - add file/add music files from directory
+    r     - read playlist file under the cursor
