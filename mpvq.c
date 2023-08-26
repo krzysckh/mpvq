@@ -736,16 +736,18 @@ static void handle_playlist(uint32_t c) {
       if (playlist.cur > 0) {
         swap((void**)&playlist.elems[playlist.cur],
              (void**)&playlist.elems[playlist.cur - 1]);
+        if (playlist.cur == current_playing)
+          current_playing--;
         playlist.cur--;
-        current_playing--;
       }
       break;
     case L'J':
       if (playlist.cur + 1 < playlist.n_elems) {
         swap((void**)&playlist.elems[playlist.cur],
              (void**)&playlist.elems[playlist.cur + 1]);
+        if (playlist.cur == current_playing)
+          current_playing++;
         playlist.cur++;
-        current_playing++;
       }
       break;
 
