@@ -13,6 +13,9 @@ build:
   $ make
   # make install
 
+usage:
+  mpvq [-hna] [file.plist]
+
 keybindings:
   global:
     j     - go down

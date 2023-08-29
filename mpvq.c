@@ -119,6 +119,26 @@ static gui_list fileexplorer;
 
 /* flags */
 static int aflag;
+static int nflag;
+
+static void histwrite(char *fmt, ...) {
+  char loc[PATH_MAX];
+  FILE *fp;
+  va_list ap;
+
+  if (nflag) return;
+
+  snprintf(loc, PATH_MAX, "%s/.mpvq_history", getenv("HOME"));
+  fp = fopen(loc, "a");
+  if (!fp) return; /* fail silently */
+
+  va_start(ap, fmt);
+  fprintf(fp, "%lld ", time(0));
+  vfprintf(fp, fmt, ap);
+  va_end(ap);
+  fputc('\n', fp);
+  fclose(fp);
+}
 
 static void play_song(char *path) {
   const char *command_load[] = { "loadfile", path, NULL },
@@ -147,6 +167,7 @@ static void *event_waiter(void *_) {
         if (((mpv_event_end_file*)ev->data)->reason != MPV_END_FILE_REASON_EOF)
           break;
 
+        histwrite("EOF %s", playlist.elems[current_playing]);
         if (current_playing + 1 < playlist.n_elems) {
           current_playing++;
           play_song(playlist.elems[current_playing]);
@@ -819,6 +840,7 @@ fully_redraw:
                 break;
               case L'n':
                 if (current_playing + 1 < playlist.n_elems) {
+                  histwrite("SKIP %s", playlist.elems[current_playing]);
                   current_playing++;
                   play_song(playlist.elems[current_playing]);
                 }
@@ -845,7 +867,7 @@ finish:
 }
 
 static void usage() {
-  fprintf(stderr, "usage: %s [-a]\n", argv0);
+  fprintf(stderr, "usage: %s [-hna] [file.plist]\n", argv0);
   exit(1);
 }
 
@@ -854,10 +876,13 @@ int main(int argc, char *argv[]) {
   pthread_t *mpvthr;
 
   argv0 = *argv;
-  while ((c = getopt(argc, argv, "ah")) != -1) {
+  while ((c = getopt(argc, argv, "anh")) != -1) {
     switch (c) {
       case 'a':
         aflag = 1;
+        break;
+      case 'n':
+        nflag = 1;
         break;
       case 'h':
       default:

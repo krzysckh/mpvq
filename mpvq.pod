@@ -6,7 +6,7 @@ mpvq - tui playlist manager for mpv
 
 =head1 SYNOPSIS
 
-B<mpvq> [B<-a>] [B<playlist-file>]
+B<mpvq> [B<-han>] [B<playlist-file>]
 
 =head1 DESCRIPTION
 
@@ -39,7 +39,15 @@ keybindings:
 
 use ascii characters to draw borders.
 
+=item B<-n>
+
+don't write history.
+
 =back
+
+=head1 FILES
+
+~/.mpvq_history
 
 =head1 AUTHOR
 
