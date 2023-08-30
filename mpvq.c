@@ -48,7 +48,7 @@ static const wchar_t *ascii_borderstr = L"-|-|++++";
 
 typedef enum {
   mode_fileexplorer,
-  mode_playlist,
+  mode_playlist
 } mode;
 
 typedef enum {
@@ -70,19 +70,21 @@ static int playlist_width     = -1;
 static int current_playing    = 0; /* "pointer" to currently playing song in */
 static char *argv0            = NULL;
 static char *cwd              = NULL;
+static char *search_buffer    = NULL;
 static mpv_handle *ctx        = NULL;
 static mode current_mode      = mode_fileexplorer;
 static player_state pstate    = state_nothing_playing;
 static gui_list playlist;
 static gui_list fileexplorer;
 
+/* HACK: why isn't this a function */
 #define check_file_error() \
   if (fp == NULL) { \
     char errs[1024]; \
     snprintf(errs, 1024, "file error: %s", strerror(errno)); \
     modal_alert("error", errs); \
     return; \
-  } \
+  }
 
 #define BASIC_MOVEMENT(T)                                  \
   case L'j':                                               \
@@ -97,12 +99,6 @@ static gui_list fileexplorer;
 #define HANDLE_SCROLL(T)                                        \
   while ((T).y1 + (T).cur - (T).scroll >= (T).y2) (T).scroll++; \
   while ((T).cur < (T).scroll) (T).scroll--;
-
-#define exit_if_term_to_small()                                               \
-  if (tb_width() < MIN_TERMINAL_WIDTH || tb_height() < MIN_TERMINAL_HEIGHT) { \
-    tb_deinit();                                                              \
-    errx(1, "terminal too small");                                            \
-  }
 
 #define DEFAULT_MODAL_OPTIONS()                \
   width      = tb_width() / 2;                 \
@@ -120,6 +116,13 @@ static gui_list fileexplorer;
 /* flags */
 static int aflag;
 static int nflag;
+
+static inline void exit_if_term_to_small() {
+  if (tb_width() < MIN_TERMINAL_WIDTH || tb_height() < MIN_TERMINAL_HEIGHT) {
+    tb_deinit();
+    errx(1, "terminal too small");
+  }
+}
 
 static void histwrite(char *fmt, ...) {
   char loc[PATH_MAX];
@@ -213,6 +216,21 @@ void shuf(void **a, int len) {
 
   for (i = len - 1; i > 0; --i)
     swap(&a[(unsigned)RAND_FUNCTION() % len], &a[i]);
+}
+
+/* less cursed implementation:
+ * https://rosettacode.org/wiki/Levenshtein_distance#C
+ */
+
+static int search_compar(const void *v1, const void *v2) {
+  char *o1 = strcasestr(*(char**)v1, search_buffer),
+       *o2 = strcasestr(*(char**)v2, search_buffer);
+
+  if (o1 && o2) return 0;
+  if (o1 && !o2) return -1;
+  if (!o1 && o2) return 1;
+
+  return -1 + (RAND_FUNCTION()) % 2;
 }
 
 /* i didn't like how strcoll() sorted my stuff :( */
@@ -519,8 +537,10 @@ static char *modal_input(char *title, char *text, char *hint) {
   struct tb_event ev;
 
   memset(buf, 0, MODAL_BUFSZ);
-  memcpy(buf, hint, strlen(hint));
-  buf += strlen(hint);
+  if (hint) {
+    memcpy(buf, hint, strlen(hint));
+    buf += strlen(hint);
+  }
 fully_redraw:
   exit_if_term_to_small();
   DEFAULT_MODAL_OPTIONS();
@@ -564,7 +584,8 @@ fully_redraw:
           case TB_KEY_ARROW_LEFT: /* movement in buf */
           case TB_KEY_ARROW_RIGHT: /* movement in buf */ break;
           case TB_KEY_TAB: cur_opt = !cur_opt; break;
-          case TB_KEY_ENTER: return cur_opt ? buf_start : NULL;
+          case TB_KEY_ENTER: return cur_opt ?
+                                    (*buf_start ? buf_start : NULL) : NULL;
           case TB_KEY_BACKSPACE:
           case TB_KEY_BACKSPACE2:
             --buf;
@@ -748,11 +769,9 @@ static void handle_playlist(uint32_t c) {
       current_playing = playlist.cur;
       play_song(playlist.elems[current_playing]);
       break;
-
-    /* TODO: sorting doesn't work */
-    /*case L'r':*/
-      /*mergesort(playlist.elems, playlist.n_elems, sizeof(char*), alphabetical);*/
-      /*break;*/
+    case L'r':
+      mergesort(playlist.elems, playlist.n_elems, sizeof(char*), alphabetical);
+      break;
     case L'K':
       if (playlist.cur > 0) {
         swap((void**)&playlist.elems[playlist.cur],
@@ -770,6 +789,12 @@ static void handle_playlist(uint32_t c) {
           current_playing++;
         playlist.cur++;
       }
+      break;
+    case L'/':
+      search_buffer = modal_input("search", "enter search term", NULL);
+      if (search_buffer == NULL)
+        break;
+      qsort(playlist.elems, playlist.n_elems, sizeof(char*), search_compar);
       break;
 
   }

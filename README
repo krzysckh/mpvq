@@ -30,6 +30,9 @@ keybindings:
     l     - play song
     K     - move song up in playlist
     J     - move song down in playlist
+    R     - shuffle playlist
+    r     - sort playlist
+    /     - search in playlist
   file explorer:
     l     - enter directory
     a     - add file/add music files from directory
