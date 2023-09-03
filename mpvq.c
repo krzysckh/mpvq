@@ -14,6 +14,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#ifdef __linux__
+#include <linux/limits.h>
+#include <bsd/bsd.h>
+#endif
+
 #include <mpv/client.h>
 
 #define TB_IMPL

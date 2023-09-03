@@ -5,6 +5,7 @@ simple tui wrapper for mpv playlists. (wip)
 
 dependencies:
   - perldoc (https://man.openbsd.org/perldoc)
+  - BSD make
   - mpv w/ libmpv
 
 build:
