@@ -15,6 +15,7 @@
 #include <sys/stat.h>
 
 #ifdef __linux__
+#warning "linux support on the way"
 #include <linux/limits.h>
 #include <bsd/bsd.h>
 #endif
@@ -152,9 +153,10 @@ static void play_song(char *path) {
   const char *command_load[] = { "loadfile", path, NULL },
              *command_play[] = { "set", "pause", "no", NULL };
 
-  if (path)
+  if (path) {
     mpv_command(ctx, command_load);
-  else
+    histwrite("LOAD %s", path);
+  } else
     mpv_command(ctx, command_play);
 }
 
