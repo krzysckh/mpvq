@@ -683,7 +683,7 @@ static void save_playlist() {
 }
 
 static void handle_fileexplorer(uint32_t c) {
-  char buf[PATH_MAX];
+  char buf[PATH_MAX] = { 0 };
   DIR *dir;
   struct dirent *de;
   int maxl, i;
@@ -692,7 +692,7 @@ static void handle_fileexplorer(uint32_t c) {
                         when cwd is unset (or if need to change dir) */
     getcwd(buf, PATH_MAX);
 
-    snprintf(buf, PATH_MAX, "%s/", buf);
+    strcpy(buf + strlen(buf), "/");
     cwd = strdup(buf);
 
     /* FIXME: spaghetti */
@@ -738,8 +738,15 @@ change_dir:
         if (is_directory(fileexplorer.elems[fileexplorer.cur])) {
           maxl = strlen(cwd) + strlen(fileexplorer.elems[fileexplorer.cur]) + 2;
           cwd = realloc(cwd, maxl);
+#ifdef __linux__
+          /* HACK: hack-ish, idk why gcc on linux breaks my arguments to
+           * snprintf */
+          snprintf(cwd, maxl, "%s%s", strdupa(cwd),
+            fileexplorer.elems[fileexplorer.cur]);
+#else
           snprintf(cwd, maxl, "%s%s", cwd,
             fileexplorer.elems[fileexplorer.cur]);
+#endif
           goto change_dir;
         }
         break;

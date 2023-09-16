@@ -1,12 +1,14 @@
 mpvq
 ----
 
-simple tui wrapper for mpv playlists. (wip)
+simple tui wrapper for mpv playlists.
 
 dependencies:
   - perldoc (https://man.openbsd.org/perldoc)
-  - BSD make
   - mpv w/ libmpv
+(and if using linux)
+  - BSD make
+  - libbsd
 
 build:
   $ git clone --recursive https://github.com/krzysckh/mpvq

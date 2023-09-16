@@ -6,8 +6,6 @@ OS!=uname -s | tr '[A-Z]' '[a-z]'
 CFLAGS=-Wall -Wextra -std=c99 `pkg-config --cflags mpv` -ggdb
 LDFLAGS=`pkg-config --libs mpv` -lm -lpthread
 
-# for some reason it doesn't work on linux yet
-# works flawlessly on openbsd tho
 .if ${OS} == "linux"
 LDFLAGS+=-lbsd
 CFLAGS+=-D_XOPEN_SOURCE -D_POSIX_C_SOURCE=200809L -D_GNU_SOURCE -Wno-format
