@@ -297,18 +297,18 @@ static void draw_outline(char* title, int x1, int y1, int x2, int y2) {
         sw = *bs++, nw = *bs++;
   int i;
 
-  tb_set_cell(x1, y1, nw, TB_WHITE, TB_DEFAULT);
-  tb_set_cell(x2, y1, ne, TB_WHITE, TB_DEFAULT);
-  tb_set_cell(x2, y2, es, TB_WHITE, TB_DEFAULT);
-  tb_set_cell(x1, y2, sw, TB_WHITE, TB_DEFAULT);
+  tb_set_cell(x1, y1, nw, TB_DEFAULT, TB_DEFAULT);
+  tb_set_cell(x2, y1, ne, TB_DEFAULT, TB_DEFAULT);
+  tb_set_cell(x2, y2, es, TB_DEFAULT, TB_DEFAULT);
+  tb_set_cell(x1, y2, sw, TB_DEFAULT, TB_DEFAULT);
   for (i = x1 + 1; i < x2; ++i) {
-    tb_set_cell(i, y1, n, TB_WHITE, TB_DEFAULT);
-    tb_set_cell(i, y2, s, TB_WHITE, TB_DEFAULT);
+    tb_set_cell(i, y1, n, TB_DEFAULT, TB_DEFAULT);
+    tb_set_cell(i, y2, s, TB_DEFAULT, TB_DEFAULT);
   }
 
   for (i = y1 + 1; i < y2; ++i) {
-    tb_set_cell(x1, i, e, TB_WHITE, TB_DEFAULT);
-    tb_set_cell(x2, i, w, TB_WHITE, TB_DEFAULT);
+    tb_set_cell(x1, i, e, TB_DEFAULT, TB_DEFAULT);
+    tb_set_cell(x2, i, w, TB_DEFAULT, TB_DEFAULT);
   }
 
   tb_print(x1 + 3, y1, TB_BLUE, TB_DEFAULT, title);
