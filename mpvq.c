@@ -15,7 +15,6 @@
 #include <sys/stat.h>
 
 #ifdef __linux__
-#warning "linux support on the way"
 #include <linux/limits.h>
 #include <bsd/bsd.h>
 #endif
