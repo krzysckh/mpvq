@@ -818,9 +818,6 @@ static void handle_playlist(uint32_t c) {
 static void ui(void) {
   struct tb_event ev;
 
-  tb_init();
-  tb_hide_cursor();
-
 fully_redraw:
   exit_if_term_to_small();
   send_clear(); /* FIXME: this sucks */
@@ -930,6 +927,9 @@ int main(int argc, char *argv[]) {
 
   init_fileexplorer();
   init_playlist();
+
+  tb_init();
+  tb_hide_cursor();
 
   if (argv[optind] != NULL)
     read_playlist(argv[optind]);
