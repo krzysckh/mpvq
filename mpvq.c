@@ -280,14 +280,18 @@ static int is_music_ext(char *path) {
   return 0;
 }
 
-static int is_directory(char *path) {
+static int is_dir(char *path) {
   struct stat s;
-  char *realpath = malloc(strlen(cwd) + strlen(path) + 2);
+  stat(path, &s);
+  return S_ISDIR(s.st_mode);
+}
+
+// fancy, no clue why
+static int is_directory(char *path) {
+  char *realpath = alloca(strlen(cwd) + strlen(path) + 2);
   sprintf(realpath, "%s%s/", cwd, path);
 
-  stat(realpath, &s);
-  free(realpath);
-  return S_ISDIR(s.st_mode);
+  return is_dir(realpath);
 }
 
 static void draw_outline(char* title, int x1, int y1, int x2, int y2) {
@@ -931,8 +935,16 @@ int main(int argc, char *argv[]) {
   tb_init();
   tb_hide_cursor();
 
-  if (argv[optind] != NULL)
-    read_playlist(argv[optind]);
+  if (argv[optind] != NULL) {
+    char *path = NULL;
+    if (is_dir(argv[optind])) {
+      path = alloca(strlen(argv[optind]) + strlen("mpvq.plist") + 2);
+      sprintf(path, "%s/mpvq.plist", argv[optind]);
+    } else
+      path = argv[optind];
+
+    read_playlist(path);
+  }
 
 #if RAND_FUNCTION == rand
   srand(time(0));
